@@ -373,22 +373,3 @@ library("grid")
       dev.off()
       
       
-      
-    
-
-
-###______SCRAP______###
-
-      ## Plot a heatmap with the genes DE in the unstiulated condition between the knockouts
-      ens <- rownames(nostimKODE)[ nostimKODE$adj.P.Val <= 0.05] # nostimKODE is a data frame containing differential expression adjusted p-values. Each row is a gene.
-      design_qc <- design_qc[ order(design_qc$stimulation, design_qc$studyGroup),] # design_qc is the metadata
-      libs <- design_qc$libid # libs are the samples
-      tp <- t(scale(t(log2(0.5+counts_pc_norm[ens, libs])))) # counts_pc_norm is the gene expression matrix. Here, I'm log-transforming the gene expression data and then z-scoring it
-      rownames(tp) <- nostimKODE[ens,"mgi_symbol"] # Here I'm renaming the rows of the matrix to be the gene symbol rather than the ensembl ID. mgi_symbol is more mouse, but your data will have "HGNC.symbol" probably, for human.
-      genotypeColors <- c("D1A dlckCre+"="red","Wildtype"="blue") # defining the colors for the annotation
-      stimulationColors <- c("Il-6, Il-1B, anti-Il-4, anti-Il-12, anti-IFNg, TGFb"="orange","none"="grey") # defining the colors for the annotation
-      
-      ha <- HeatmapAnnotation( df=design_qc[,c("studyGroup","stimulation")], col=list(studyGroup=genotypeColors, stimulation=stimulationColors))
-      png("../../data/2023-07-05/plots/14DEGenes_Dyrk1aKO_heatmap.png",width=600,height=300)
-      Heatmap(tp, show_column_names=FALSE,top_annotation=ha, cluster_columns=FALSE,name="scaled\nlog\nexpression",column_title="14 genes DE at <=5% FDR\nbetween Dyrk1a-KO and Wiltype\nin unstimulated cells")
-      dev.off() 
